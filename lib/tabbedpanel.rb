@@ -49,11 +49,11 @@ module TabbedPanel
     end
 
     def output_buffer
-      view.output_buffer
+      @view.output_buffer
     end
 
     def output_buffer=(val)
-      view.output_buffer = val
+      @view.output_buffer = val
     end
 
     @@gen_id=0
