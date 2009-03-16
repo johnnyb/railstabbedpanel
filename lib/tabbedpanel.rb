@@ -8,7 +8,7 @@
 module TabbedPanel
   module TabbedPanelHelper
     def tabbed_panel(opts={}, &block)
-      tabctx = TabbedContext.new(opts)
+      tabctx = TabbedContext.new(self, opts)
       if block_given?
         extra_html = capture(tabctx, &block)
         concat(tabctx.render, block.binding)
@@ -18,13 +18,15 @@ module TabbedPanel
       return tabctx
     end
   end
+
   class TabbedContext
     include ActionView::Helpers::CaptureHelper
     include ActionView::Helpers::JavaScriptHelper
     include ActionView::Helpers::FormTagHelper
     include ActionView::Helpers::TagHelper
 
-    def initialize(opts = {})
+    def initialize(view, opts = {})
+      @view = view
       @default_first_tab_active = opts[:default_first_tab_active].nil? ? true : opts[:set_first_tab_active]
       @active_panel = opts[:active_panel]
       @tracking_function = (opts[:tracking].nil? || opts[:tracking] == false) ? nil : (opts[:tracking] == true ? "urchinTracker" : opts[:tracking])
@@ -44,6 +46,14 @@ module TabbedPanel
       @select_function_name = opts[:select_function_name]||idgen
 
       @panels = []
+    end
+
+    def output_buffer
+      view.output_buffer
+    end
+
+    def output_buffer=(val)
+      view.output_buffer = val
     end
 
     @@gen_id=0
