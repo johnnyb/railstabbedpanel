@@ -35,12 +35,14 @@ module TabbedPanel
       @tab_class = opts[:tab_class] || 'panel_tab'
       @tab_unselected_class = opts[:tab_unselected_class] || 'tab_unselected'
       @tab_selected_class = opts[:tab_selected_class] || 'tab_selected'
+      @tab_selected_initial_class = opts[:tab_selected_class] || 'tab_selected_initial'
       @tab_container_class = opts[:tab_container_class] || 'tab_container'
       @container_class = opts[:container_class] || 'tabbed_panel'
       @container_id = opts[:container_id] || @base_name
       @panel_class = opts[:panel_class] || 'panel_panel'
       @panel_unselected_class = opts[:panel_unselected_class] || 'panel_unselected'
       @panel_selected_class = opts[:panel_selected_class] || 'panel_selected'
+      @panel_selected_initial_class = opts[:panel_selected_class] || 'panel_selected_initial'
       @panel_container_class = opts[:panel_container_class] || 'panel_panels'
 
       @select_function_name = opts[:select_function_name]||idgen
@@ -114,14 +116,14 @@ module TabbedPanel
       end
     
       @panels.each do |panel|
-        str += "<li class='#{@tab_class} #{panel[:active] ? @tab_selected_class : @tab_unselected_class} #{panel[:tab_class]}' id='#{panel[:base_id]}_tab'>" + link_to_function(panel[:name], "document.#{@select_function_name}('#{panel[:base_id]}')") + "</li>"
+        str += "<li class='#{@tab_class} #{panel[:active] ? "#{@tab_selected_class} #{@tab_selected_initial_class}" : @tab_unselected_class} #{panel[:tab_class]}' id='#{panel[:base_id]}_tab'>" + link_to_function(panel[:name], "document.#{@select_function_name}('#{panel[:base_id]}')") + "</li>"
       end
 
       str += "</ul>\n"
       str += "<ul class='#{@panel_container_class}' id='#{@base_name}_panels'>\n"
 
       @panels.each do |panel|
-        str += "<li class='#{@panel_class} #{panel[:active] ? @panel_selected_class : @panel_unselected_class} #{panel[:panel_class]}' id='#{panel[:base_id]}_panel'>" + panel[:content] + "</li>\n"
+        str += "<li class='#{@panel_class} #{panel[:active] ? "#{@panel_selected_class} #{@panel_selected_initial_class}" : @panel_unselected_class} #{panel[:panel_class]}' id='#{panel[:base_id]}_panel'>" + panel[:content] + "</li>\n"
       end
       str += "</ul>\n"
       str += "</div>\n"
@@ -132,7 +134,7 @@ module TabbedPanel
       @panels.each do |panel|
         js_code += "tmp_tab = $('#{panel[:base_id]}_tab');\n"
         js_code += "tmp_panel = $('#{panel[:base_id]}_panel');\n"
-        js_code += "if(base_id == '#{panel[:base_id]}') { \n tmp_panel.removeClassName('#{@panel_unselected_class}'); tmp_tab.removeClassName('#{@tab_unselected_class}'); tmp_tab.addClassName('#{@tab_selected_class}'); tmp_panel.addClassName('#{@panel_selected_class}'); tmp_tracking_uri = '#{panel[:tracking_uri]}'; \n} else {\n tmp_panel.removeClassName('#{@panel_selected_class}'); tmp_tab.removeClassName('#{@tab_selected_class}'); tmp_tab.addClassName('#{@tab_unselected_class}'); tmp_panel.addClassName('#{@panel_unselected_class}'); \n}"
+        js_code += "if(base_id == '#{panel[:base_id]}') { \n tmp_panel.removeClassName('#{@panel_selected_initial_class}'); tmp_panel.removeClassName('#{@panel_unselected_class}'); tmp_tab.removeClassName('#{@tab_unselected_class}'); tmp_tab.removeClassName('#{@tab_selected_initial_class}'); tmp_tab.addClassName('#{@tab_selected_class}'); tmp_panel.addClassName('#{@panel_selected_class}'); tmp_tracking_uri = '#{panel[:tracking_uri]}'; \n} else {\n tmp_panel.removeClassName('#{@panel_selected_class}'); tmp_panel.removeClassName('#{@panel_selected_initial_class}'); tmp_tab.removeClassName('#{@tab_selected_class}'); tmp_tab.removeClassName('#{@tab_selected_initial_class}'); tmp_tab.addClassName('#{@tab_unselected_class}'); tmp_panel.addClassName('#{@panel_unselected_class}'); \n}"
       end
       
       #Do the actual tracking as the last thing, in case it errors out.
